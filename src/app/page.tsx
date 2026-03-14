@@ -17,6 +17,7 @@ export default function Home() {
   const [loadingText, setLoadingText] = useState("");
   const [useAI, setUseAI] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showHelp, setShowHelp] = useState(false);
 
   const handleAddPlayer = () => {
     const name = playerInput.trim();
@@ -114,9 +115,71 @@ export default function Home() {
         >
           ?מי אמר את זה
         </motion.h1>
-        <p className="text-center text-white/60 mb-10 text-lg">
-          משחק הניחושים של קבוצת הוואטסאפ 💬
-        </p>
+        <div className="flex items-center justify-center gap-2 mb-10">
+          <p className="text-center text-white/60 text-lg">
+            משחק הניחושים של קבוצת הוואטסאפ 💬
+          </p>
+          <button
+            onClick={() => setShowHelp(true)}
+            className="w-6 h-6 rounded-full bg-white/20 hover:bg-white/30 text-white/70 hover:text-white
+              text-xs font-bold flex items-center justify-center cursor-pointer transition-colors shrink-0"
+            title="איך מייצאים שיחה מוואטסאפ?"
+          >
+            i
+          </button>
+        </div>
+
+        {/* Help modal */}
+        <AnimatePresence>
+          {showHelp && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+              onClick={() => setShowHelp(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-kahoot-purple-light rounded-2xl p-6 max-w-md w-full shadow-2xl"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-black">איך מייצאים שיחה?</h3>
+                  <button
+                    onClick={() => setShowHelp(false)}
+                    className="text-white/60 hover:text-white cursor-pointer text-lg"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div className="space-y-4 text-white/80">
+                  <div>
+                    <p className="font-bold text-white mb-1">iPhone:</p>
+                    <ol className="list-decimal list-inside space-y-1 text-sm">
+                      <li>פתחו את הקבוצה בוואטסאפ</li>
+                      <li>לחצו על שם הקבוצה למעלה</li>
+                      <li>גללו למטה → &quot;ייצוא שיחה&quot;</li>
+                      <li>בחרו &quot;ללא מדיה&quot;</li>
+                      <li>שמרו את הקובץ</li>
+                    </ol>
+                  </div>
+                  <div>
+                    <p className="font-bold text-white mb-1">Android:</p>
+                    <ol className="list-decimal list-inside space-y-1 text-sm">
+                      <li>פתחו את הקבוצה בוואטסאפ</li>
+                      <li>לחצו על ⋮ (שלוש נקודות) → עוד → ייצוא שיחה</li>
+                      <li>בחרו &quot;ללא מדיה&quot;</li>
+                      <li>שמרו את הקובץ</li>
+                    </ol>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <AnimatePresence mode="wait">
           {loading ? (
