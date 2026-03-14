@@ -58,7 +58,7 @@ WhatsApp .txt file
      ▼                  ▼
 ```
 
-## Path A: AI On (Bedrock)
+## Path A: AI On (Gemini — client-side)
 
 ```
 Filtered Messages
@@ -71,7 +71,9 @@ Filtered Messages
               │
               ▼
 ┌──────────────────────────────┐
-│  Bedrock Claude (Haiku)      │
+│  Gemini 2.0 Flash Lite       │
+│  (called from browser using  │
+│   user-provided API key)     │
 │                              │
 │  Prompt asks to pick top N   │
 │  PRIORITIZING:               │
@@ -89,13 +91,15 @@ Filtered Messages
 │                              │
 │  Returns: JSON array of      │
 │  indices, ranked by interest │
-│  Fallback: smart scorer if   │
-│  Bedrock fails               │
+│  Throws error on failure     │
+│  (no silent fallback)        │
 └─────────────┬────────────────┘
               │
               ▼
         Game Questions
 ```
+
+**Note:** All processing (parsing, filtering, ranking, question generation) runs entirely in the browser. No chat data is sent to any server. The Gemini API is called directly from the client using the user's own API key.
 
 ## Path B: AI Off (Smart Scorer)
 

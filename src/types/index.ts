@@ -36,6 +36,7 @@ export interface ChatData {
   participants: string[];
   useAI: boolean;
   questionCount: number;
+  geminiApiKey?: string;
 }
 
 export interface GameState {

@@ -1,5 +1,4 @@
 import { ParsedMessage, FilteredMessage } from "@/types";
-import { invokeBedrockClaude } from "@/lib/bedrock/client";
 
 const MAX_MESSAGES_TO_SEND = 80;
 
@@ -12,16 +11,15 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-export async function rankMessagesWithBedrock(
+export async function rankMessagesWithGemini(
   messages: ParsedMessage[],
-  count: number
+  count: number,
+  apiKey: string
 ): Promise<FilteredMessage[]> {
-  // If we have fewer messages than requested, return them all
   if (messages.length <= count) {
     return messages.map((m) => ({ ...m, score: 1 }));
   }
 
-  // Sample if the set is too large
   const sampled =
     messages.length > MAX_MESSAGES_TO_SEND
       ? shuffle(messages).slice(0, MAX_MESSAGES_TO_SEND)
@@ -57,12 +55,33 @@ Messages:
 ${messagesText}`;
 
   try {
-    const response = await invokeBedrockClaude(prompt);
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            maxOutputTokens: 4096,
+            temperature: 0.7,
+          },
+        }),
+      }
+    );
 
-    // Extract JSON array from response
-    const match = response.match(/\[[\d,\s]+\]/);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      const errorMsg = errorData?.error?.message || response.statusText;
+      throw new Error(`Gemini API error: ${errorMsg}`);
+    }
+
+    const data = await response.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+
+    const match = text.match(/\[[\d,\s]+\]/);
     if (!match) {
-      console.warn("Bedrock did not return valid JSON, falling back to random selection");
+      console.warn("Gemini did not return valid JSON, falling back to random selection");
       return fallbackSelection(messages, count);
     }
 
@@ -74,12 +93,11 @@ ${messagesText}`;
       if (idx >= 0 && idx < sampled.length) {
         ranked.push({
           ...sampled[idx],
-          score: count - rank, // Higher score = more interesting
+          score: count - rank,
         });
       }
     }
 
-    // If we didn't get enough, fill with random picks
     if (ranked.length < count) {
       const pickedIndices = new Set(ranked.map((r) => r.index));
       const remaining = messages.filter((m) => !pickedIndices.has(m.index));
@@ -89,8 +107,8 @@ ${messagesText}`;
 
     return ranked;
   } catch (error) {
-    console.error("Bedrock ranking failed:", error);
-    return fallbackSelection(messages, count);
+    console.error("Gemini ranking failed:", error);
+    throw error;
   }
 }
 
