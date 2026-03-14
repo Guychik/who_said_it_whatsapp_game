@@ -118,12 +118,12 @@ export default function Home() {
           ?מי אמר את זה
         </motion.h1>
         <div className="flex items-center justify-center gap-2 mb-10">
-          <p className="text-center text-white/60 text-lg">
+          <p className="text-center text-wa-text-secondary text-lg">
             משחק הניחושים של קבוצת הוואטסאפ 💬
           </p>
           <button
             onClick={() => setShowHelp(true)}
-            className="w-6 h-6 rounded-full bg-white/20 hover:bg-white/30 text-white/70 hover:text-white
+            className="w-6 h-6 rounded-full bg-wa-input hover:bg-wa-border text-wa-text-secondary hover:text-wa-text
               text-xs font-bold flex items-center justify-center cursor-pointer transition-colors shrink-0"
             title="איך מייצאים שיחה מוואטסאפ?"
           >
@@ -146,20 +146,20 @@ export default function Home() {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 onClick={(e) => e.stopPropagation()}
-                className="bg-kahoot-purple-light rounded-2xl p-6 max-w-md w-full shadow-2xl"
+                className="bg-wa-header rounded-2xl p-6 max-w-md w-full shadow-2xl border border-wa-border"
               >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-black">איך מייצאים שיחה?</h3>
                   <button
                     onClick={() => setShowHelp(false)}
-                    className="text-white/60 hover:text-white cursor-pointer text-lg"
+                    className="text-wa-text-secondary hover:text-wa-text cursor-pointer text-lg"
                   >
                     ✕
                   </button>
                 </div>
-                <div className="space-y-4 text-white/80">
+                <div className="space-y-4 text-wa-text-secondary">
                   <div>
-                    <p className="font-bold text-white mb-1">iPhone:</p>
+                    <p className="font-bold text-wa-text mb-1">iPhone:</p>
                     <ol className="list-decimal list-inside space-y-1 text-sm">
                       <li>פתחו את הקבוצה בוואטסאפ</li>
                       <li>לחצו על שם הקבוצה למעלה</li>
@@ -169,7 +169,7 @@ export default function Home() {
                     </ol>
                   </div>
                   <div>
-                    <p className="font-bold text-white mb-1">Android:</p>
+                    <p className="font-bold text-wa-text mb-1">Android:</p>
                     <ol className="list-decimal list-inside space-y-1 text-sm">
                       <li>פתחו את הקבוצה בוואטסאפ</li>
                       <li>לחצו על ⋮ (שלוש נקודות) → עוד → ייצוא שיחה</li>
@@ -224,11 +224,11 @@ export default function Home() {
                     max={20}
                     value={questionCount}
                     onChange={(e) => setQuestionCount(Number(e.target.value))}
-                    className="flex-1 accent-kahoot-yellow"
+                    className="flex-1 accent-wa-green"
                   />
                   <span
                     dir="ltr"
-                    className="bg-white/10 px-4 py-2 rounded-lg font-bold text-xl min-w-[3rem] text-center"
+                    className="bg-wa-input px-4 py-2 rounded-lg font-bold text-xl min-w-[3rem] text-center"
                   >
                     {questionCount}
                   </span>
@@ -241,14 +241,14 @@ export default function Home() {
                   <label className="block text-lg font-bold">
                     סינון חכם
                   </label>
-                  <p className="text-white/40 text-sm">
+                  <p className="text-wa-text-secondary text-sm">
                     {useAI ? "AI בוחר הודעות מעניינות" : "בחירה על ידי חוקים (אופליין)"}
                   </p>
                 </div>
                 <button
                   onClick={() => setUseAI(!useAI)}
                   className={`relative w-14 h-8 rounded-full transition-colors cursor-pointer ${
-                    useAI ? "bg-kahoot-green" : "bg-white/20"
+                    useAI ? "bg-wa-green" : "bg-wa-input"
                   }`}
                 >
                   <motion.div
@@ -279,15 +279,15 @@ export default function Home() {
                       onChange={(e) => setGeminiApiKey(e.target.value)}
                       placeholder="AIza..."
                       dir="ltr"
-                      className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white
-                        placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-kahoot-yellow font-mono text-sm"
+                      className="w-full bg-wa-input border border-wa-border rounded-lg px-4 py-3 text-wa-text
+                        placeholder:text-wa-text-secondary focus:outline-none focus:ring-2 focus:ring-wa-green font-mono text-sm"
                     />
-                    <p className="text-white/40 text-xs mt-1">
+                    <p className="text-wa-text-secondary text-xs mt-1">
                       <a
                         href="https://aistudio.google.com/apikey"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="underline hover:text-white/60"
+                        className="underline hover:text-wa-text"
                       >
                         Google AI Studio — קבלו מפתח חינמי
                       </a>
@@ -310,13 +310,13 @@ export default function Home() {
                     onChange={(e) => setPlayerInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleAddPlayer()}
                     placeholder="שם השחקן/ית"
-                    className="flex-1 bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white
-                      placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-kahoot-yellow"
+                    className="flex-1 bg-wa-input border border-wa-border rounded-lg px-4 py-3 text-wa-text
+                      placeholder:text-wa-text-secondary focus:outline-none focus:ring-2 focus:ring-wa-green"
                   />
                   <button
                     onClick={handleAddPlayer}
-                    className="bg-kahoot-green text-white font-bold px-6 py-3 rounded-lg
-                      hover:bg-kahoot-green/80 transition-colors cursor-pointer"
+                    className="bg-wa-green text-white font-bold px-6 py-3 rounded-lg
+                      hover:bg-wa-green-dark transition-colors cursor-pointer"
                   >
                     +
                   </button>
@@ -327,12 +327,12 @@ export default function Home() {
                       key={p.name}
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      className="bg-white/20 px-3 py-1 rounded-full flex items-center gap-2"
+                      className="bg-wa-input px-3 py-1 rounded-full flex items-center gap-2"
                     >
                       {p.name}
                       <button
                         onClick={() => removePlayer(p.name)}
-                        className="text-white/60 hover:text-white cursor-pointer"
+                        className="text-wa-text-secondary hover:text-wa-text cursor-pointer"
                       >
                         ✕
                       </button>
@@ -346,7 +346,7 @@ export default function Home() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="bg-kahoot-red/20 border border-kahoot-red/40 rounded-lg p-4 text-center"
+                  className="bg-wa-danger/20 border border-wa-danger/40 rounded-lg p-4 text-center"
                 >
                   {error}
                 </motion.div>
@@ -358,8 +358,8 @@ export default function Home() {
                 whileTap={{ scale: 0.97 }}
                 onClick={handleStart}
                 disabled={!file}
-                className="w-full bg-kahoot-yellow text-kahoot-purple-dark font-black text-2xl py-5 rounded-xl
-                  hover:bg-kahoot-yellow/90 transition-all disabled:opacity-40 disabled:cursor-not-allowed
+                className="w-full bg-wa-green text-white font-black text-2xl py-5 rounded-xl
+                  hover:bg-wa-green-dark transition-all disabled:opacity-40 disabled:cursor-not-allowed
                   cursor-pointer shadow-xl"
               >
                 !יאללה

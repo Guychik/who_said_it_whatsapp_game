@@ -108,9 +108,19 @@ export function smartScoreMessages(
     return { ...msg, score };
   });
 
-  // Sort by score descending, take top N
-  scored.sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
-  return scored.slice(0, count);
+  // Sort by score descending with random tiebreaker so same-score messages shuffle
+  scored.sort((a, b) => {
+    const diff = (b.score ?? 0) - (a.score ?? 0);
+    return diff !== 0 ? diff : Math.random() - 0.5;
+  });
+
+  // Take top 3x candidates and shuffle, then pick N — adds variety each game
+  const pool = scored.slice(0, Math.min(count * 3, scored.length));
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool.slice(0, count);
 }
 
 // Cache word frequency across all messages

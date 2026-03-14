@@ -35,8 +35,8 @@ export default function ScoreBoard({
             transition={{ delay: isEndScreen ? i * 0.2 : 0 }}
             className={`flex items-center justify-between p-4 rounded-xl ${
               isEndScreen && i === 0
-                ? "bg-kahoot-yellow/30 ring-2 ring-kahoot-yellow"
-                : "bg-white/10"
+                ? "bg-wa-green/20 ring-2 ring-wa-green"
+                : "bg-wa-panel border border-wa-border/50"
             }`}
           >
             <div className="flex items-center gap-3">
@@ -47,12 +47,12 @@ export default function ScoreBoard({
               )}
               <span className="font-bold text-lg">{player.name}</span>
               {player.streak > 1 && (
-                <span className="text-kahoot-orange text-sm">
+                <span className="text-wa-yellow text-sm">
                   🔥 {player.streak}
                 </span>
               )}
             </div>
-            <div dir="ltr" className="font-black text-xl">
+            <div dir="ltr" className="font-black text-xl text-wa-green">
               {player.score}
             </div>
           </motion.div>

@@ -42,8 +42,8 @@ export default function FileUpload({ onFileSelected }: FileUploadProps) {
       transition={{ delay: 0.2 }}
       className={`relative border-3 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 ${
         isDragging
-          ? "border-kahoot-yellow bg-kahoot-purple-light/50 scale-105"
-          : "border-white/40 bg-kahoot-purple-light/20 hover:border-white/60 hover:bg-kahoot-purple-light/30"
+          ? "border-wa-green bg-wa-green/10 scale-105"
+          : "border-wa-border bg-wa-panel/50 hover:border-wa-text-secondary hover:bg-wa-panel/80"
       }`}
       onDragOver={(e) => {
         e.preventDefault();
@@ -65,15 +65,15 @@ export default function FileUpload({ onFileSelected }: FileUploadProps) {
 
       {fileName ? (
         <div>
-          <p className="text-xl font-bold text-kahoot-yellow">{fileName}</p>
-          <p className="text-white/60 mt-2">לחצו כדי להחליף קובץ</p>
+          <p className="text-xl font-bold text-wa-green">{fileName}</p>
+          <p className="text-wa-text-secondary mt-2">לחצו כדי להחליף קובץ</p>
         </div>
       ) : (
         <div>
           <p className="text-xl font-bold mb-2">
             גררו לכאן קובץ ייצוא וואטסאפ
           </p>
-          <p className="text-white/60">או לחצו כדי לבחור קובץ (.txt)</p>
+          <p className="text-wa-text-secondary">או לחצו כדי לבחור קובץ (.txt)</p>
         </div>
       )}
     </motion.div>
