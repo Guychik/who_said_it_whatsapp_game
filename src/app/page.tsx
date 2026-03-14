@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import FileUpload from "@/components/FileUpload";
 import { useGameStore } from "@/lib/game/game-store";
+import { parseWhatsAppChat } from "@/lib/parser/whatsapp-parser";
+import { filterMessages } from "@/lib/filter/rule-based-filter";
+import { smartScoreMessages } from "@/lib/filter/smart-scorer";
+import { rankMessagesWithGemini } from "@/lib/gemini/client";
+import { generateQuestions } from "@/lib/game/game-logic";
 
 export default function Home() {
   const router = useRouter();
@@ -16,6 +21,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [loadingText, setLoadingText] = useState("");
   const [useAI, setUseAI] = useState(true);
+  const [geminiApiKey, setGeminiApiKey] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [showHelp, setShowHelp] = useState(false);
 
@@ -29,66 +35,62 @@ export default function Home() {
 
   const handleStart = async () => {
     if (!file) return;
+    if (useAI && !geminiApiKey.trim()) {
+      setError("יש להזין מפתח Gemini API כדי להשתמש בסינון חכם");
+      return;
+    }
 
     setLoading(true);
     setError(null);
 
     try {
-      // Step 1: Parse
+      // Step 1: Parse locally
       setLoadingText("...מנתח הודעות");
-      const formData = new FormData();
-      formData.append("file", file);
+      const text = await file.text();
+      const { participants, messages } = await parseWhatsAppChat(text);
 
-      const parseRes = await fetch("/api/parse", {
-        method: "POST",
-        body: formData,
-      });
-      const parseData = await parseRes.json();
-
-      if (!parseRes.ok) {
-        throw new Error(parseData.error || "שגיאה בניתוח הקובץ");
+      if (messages.length === 0) {
+        throw new Error("לא נמצאו הודעות בקובץ. וודאו שזהו ייצוא שיחה מוואטסאפ.");
       }
+
+      if (participants.length < 2) {
+        throw new Error("נמצא רק משתתף אחד. יש צורך בלפחות 2 משתתפים.");
+      }
+
+      const filtered = filterMessages(messages);
 
       setLoadingText(
         useAI
-          ? `נמצאו ${parseData.totalMessages} הודעות, ${parseData.filteredCount} עברו סינון. AI בוחר את הטובות...`
-          : `נמצאו ${parseData.totalMessages} הודעות, ${parseData.filteredCount} עברו סינון. בוחר באקראי...`
+          ? `נמצאו ${messages.length} הודעות, ${filtered.length} עברו סינון. AI בוחר את הטובות...`
+          : `נמצאו ${messages.length} הודעות, ${filtered.length} עברו סינון. בוחר באקראי...`
       );
 
-      // Step 2: Rank (with AI or random)
-      const rankRes = await fetch("/api/rank", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          filteredMessages: parseData.filteredMessages,
-          allMessages: parseData.allMessages,
-          participants: parseData.participants,
-          count: questionCount,
-          useAI,
-        }),
-      });
-      const rankData = await rankRes.json();
+      // Step 2: Rank
+      const ranked = useAI
+        ? await rankMessagesWithGemini(filtered, questionCount, geminiApiKey.trim())
+        : smartScoreMessages(filtered, messages, questionCount);
 
-      if (!rankRes.ok) {
-        throw new Error(rankData.error || "שגיאה בדירוג ההודעות");
-      }
+      // Step 3: Generate questions
+      const questions = generateQuestions(ranked, participants, messages);
 
-      // Initialize game with chat data for replay
+      // Initialize game
       initGame(
-        rankData.questions,
-        parseData.participants,
-        parseData.allMessages.map(
-          (m: { date: string; author: string; message: string; index: number }) => ({
-            ...m,
-            date: new Date(m.date),
-          })
-        ),
+        questions.map((q) => ({
+          ...q,
+          message: {
+            ...q.message,
+            date: q.message.date instanceof Date ? q.message.date : new Date(q.message.date),
+          },
+        })),
+        participants,
+        messages,
         {
-          filteredMessages: parseData.filteredMessages,
-          allMessages: parseData.allMessages,
-          participants: parseData.participants,
+          filteredMessages: filtered,
+          allMessages: messages,
+          participants,
           useAI,
           questionCount,
+          geminiApiKey: useAI ? geminiApiKey.trim() : undefined,
         }
       );
 
@@ -257,10 +259,49 @@ export default function Home() {
                 </button>
               </div>
 
+              {/* Gemini API Key */}
+              <AnimatePresence>
+                {useAI && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <label className="block text-lg font-bold mb-2">
+                      Gemini API Key
+                    </label>
+                    <input
+                      type="password"
+                      name="gemini-api-key"
+                      autoComplete="on"
+                      value={geminiApiKey}
+                      onChange={(e) => setGeminiApiKey(e.target.value)}
+                      placeholder="AIza..."
+                      dir="ltr"
+                      className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white
+                        placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-kahoot-yellow font-mono text-sm"
+                    />
+                    <p className="text-white/40 text-xs mt-1">
+                      <a
+                        href="https://aistudio.google.com/apikey"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline hover:text-white/60"
+                      >
+                        Google AI Studio — קבלו מפתח חינמי
+                      </a>
+                      {" · "}
+                      המפתח נשמר רק בדפדפן ולא נשלח לשרתים שלנו
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               {/* Players */}
               <div>
                 <label className="block text-lg font-bold mb-2">
-                  שחקנים (אופציונלי - למעקב ניקוד)
+                  שחקנים (אופציונלי — למעקב ניקוד)
                 </label>
                 <div className="flex gap-2 mb-3">
                   <input

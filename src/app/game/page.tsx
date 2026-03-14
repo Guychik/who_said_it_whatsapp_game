@@ -4,10 +4,14 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGameStore } from "@/lib/game/game-store";
+import { smartScoreMessages } from "@/lib/filter/smart-scorer";
+import { rankMessagesWithGemini } from "@/lib/gemini/client";
+import { generateQuestions } from "@/lib/game/game-logic";
 import QuestionCard from "@/components/QuestionCard";
 import AnswerGrid from "@/components/AnswerGrid";
 import CluePanel from "@/components/CluePanel";
 import ScoreBoard from "@/components/ScoreBoard";
+import ChatContext from "@/components/ChatContext";
 
 export default function GamePage() {
   const router = useRouter();
@@ -18,6 +22,7 @@ export default function GamePage() {
     players,
     revealedClues,
     selectedAnswer,
+    allMessages,
     chatData,
     selectAnswer,
     revealClue,
@@ -68,31 +73,28 @@ export default function GamePage() {
     setReplaying(true);
 
     try {
-      const rankRes = await fetch("/api/rank", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          filteredMessages: chatData.filteredMessages,
-          allMessages: chatData.allMessages,
-          participants: chatData.participants,
-          count: chatData.questionCount,
-          useAI: chatData.useAI,
-        }),
-      });
-      const rankData = await rankRes.json();
+      const hydratedFiltered = chatData.filteredMessages.map((m) => ({
+        ...m,
+        date: typeof m.date === "string" ? new Date(m.date) : m.date,
+      }));
+      const hydratedAll = chatData.allMessages.map((m) => ({
+        ...m,
+        date: typeof m.date === "string" ? new Date(m.date) : m.date,
+      }));
 
-      if (!rankRes.ok) throw new Error(rankData.error);
+      const ranked = chatData.useAI && chatData.geminiApiKey
+        ? await rankMessagesWithGemini(hydratedFiltered, chatData.questionCount, chatData.geminiApiKey)
+        : smartScoreMessages(hydratedFiltered, hydratedAll, chatData.questionCount);
+
+      const newQuestions = generateQuestions(ranked, chatData.participants, hydratedAll);
 
       // Reset player scores but keep names
       const resetPlayers = players.map((p) => ({ ...p, score: 0, streak: 0 }));
 
       initGame(
-        rankData.questions,
+        newQuestions,
         chatData.participants,
-        chatData.allMessages.map((m) => ({
-          ...m,
-          date: typeof m.date === "string" ? new Date(m.date) : m.date,
-        })),
+        hydratedAll,
         chatData
       );
 
@@ -202,26 +204,12 @@ export default function GamePage() {
             exit={{ opacity: 0 }}
             className="text-center"
           >
-            <QuestionCard
-              question={currentQuestion}
-              questionNumber={currentQuestionIndex + 1}
-              totalQuestions={questions.length}
-            />
-
-            <AnswerGrid
-              options={currentQuestion.options}
-              onSelect={() => {}}
-              selectedAnswer={selectedAnswer}
-              correctAnswer={currentQuestion.correctAnswer}
-              isRevealed={true}
-            />
-
             {/* Reveal animation */}
             <motion.div
               initial={{ scale: 0, rotate: -10 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: "spring", damping: 10, stiffness: 200 }}
-              className="mt-8"
+              className="mb-6"
             >
               <div className="bg-kahoot-green/30 border-2 border-kahoot-green rounded-2xl p-6 max-w-md mx-auto">
                 <p className="text-2xl font-black mb-1">
@@ -271,6 +259,14 @@ export default function GamePage() {
                 )}
               </motion.div>
             )}
+
+            {/* Chat context replaces the question card */}
+            <div className="mt-6">
+              <ChatContext
+                targetMessage={currentQuestion.message}
+                allMessages={allMessages}
+              />
+            </div>
 
             <motion.button
               initial={{ opacity: 0 }}
