@@ -25,6 +25,69 @@ body {
   min-height: 100vh;
 }
 
+/* WhatsApp doodle wallpaper */
+.wa-doodle-bg {
+  background-color: #0B141A;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cdefs%3E%3Cstyle%3E.d%7Bfill:%23131d25;%7D%3C/style%3E%3C/defs%3E%3Cpath class='d' d='M20 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z'/%3E%3Cpath class='d' d='M80 45l-6-4 2-6h-7l-1 6-6 3 4 5-2 6 6-1 5 4 1-6 6-3zM155 25c0 2.8-2.2 5-5 5s-5-2.2-5-5 2.2-5 5-5 5 2.2 5 5zM40 75l5-8-5-8h10l5 8-5 8zM170 90l-4-3 1-5-5 2-4-3 0 5-4 3 5 2 1 5 3-4zM95 100c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3zm0-8c-2.8 0-5 2.2-5 5s2.2 5 5 5 5-2.2 5-5-2.2-5-5-5zM30 140l8 0 0-3-8 0 0-8-3 0 0 8-8 0 0 3 8 0 0 8 3 0zM120 150c0 1.7-1.3 3-3 3s-3-1.3-3-3 1.3-3 3-3 3 1.3 3 3zm0-2c0-2.8-2.2-5-5-5s-5 2.2-5 5 2.2 5 5 5 5-2.2 5-5zM175 160l-3-5h-6l-3 5 3 5h6zM60 180l4-3-1-5 5 2 4-3 0 5 4 3-5 2-1 5-3-4zM140 185c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z'/%3E%3C/svg%3E");
+}
+
+/* WhatsApp-style header */
+.wa-header-bar {
+  background: var(--color-wa-header);
+  border-bottom: 1px solid rgba(134, 150, 160, 0.15);
+}
+
+/* Typing indicator animation */
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-4px); }
+}
+.typing-dot {
+  animation: typingBounce 1.4s ease-in-out infinite;
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-wa-text-secondary);
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+/* Custom range slider */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: var(--color-wa-input);
+  border-radius: 2px;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-wa-green);
+  cursor: pointer;
+  border: 2px solid var(--color-wa-bg);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-wa-green);
+  cursor: pointer;
+  border: 2px solid var(--color-wa-bg);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Progress bar glow */
+.progress-glow {
+  box-shadow: 0 0 8px rgba(0, 168, 132, 0.4);
+}
+
 ::-webkit-scrollbar {
   width: 6px;
 }

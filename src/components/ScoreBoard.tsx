@@ -8,6 +8,9 @@ interface ScoreBoardProps {
   isEndScreen?: boolean;
 }
 
+// WhatsApp-style contact colors
+const AVATAR_COLORS = ["#00A884", "#53BDEB", "#FF9800", "#E91E63", "#9C27B0", "#3F51B5"];
+
 export default function ScoreBoard({
   players,
   isEndScreen = false,
@@ -20,39 +23,51 @@ export default function ScoreBoard({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`${isEndScreen ? "max-w-lg" : "max-w-2xl"} mx-auto mt-6`}
+      className={`${isEndScreen ? "max-w-md" : "max-w-2xl"} mx-auto`}
     >
-      {isEndScreen && (
-        <h2 className="text-4xl font-black text-center mb-8">🏆 תוצאות</h2>
-      )}
+      {/* Styled like WhatsApp group members list */}
+      <div className="bg-wa-panel rounded-xl overflow-hidden border border-wa-border/30">
+        {isEndScreen && (
+          <div className="px-4 py-3 border-b border-wa-border/20">
+            <p className="text-wa-text-secondary text-xs">{sorted.length} משתתפים</p>
+          </div>
+        )}
 
-      <div className="space-y-3">
         {sorted.map((player, i) => (
           <motion.div
             key={player.name}
-            initial={{ opacity: 0, x: -30 }}
+            initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: isEndScreen ? i * 0.2 : 0 }}
-            className={`flex items-center justify-between p-4 rounded-xl ${
-              isEndScreen && i === 0
-                ? "bg-wa-green/20 ring-2 ring-wa-green"
-                : "bg-wa-panel border border-wa-border/50"
+            transition={{ delay: isEndScreen ? i * 0.15 : 0 }}
+            className={`flex items-center gap-3 px-4 py-3 ${
+              i < sorted.length - 1 ? "border-b border-wa-border/15" : ""
             }`}
           >
-            <div className="flex items-center gap-3">
-              {isEndScreen && (
-                <span className="text-2xl">
-                  {i === 0 ? "👑" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i + 1}.`}
-                </span>
-              )}
-              <span className="font-bold text-lg">{player.name}</span>
-              {player.streak > 1 && (
-                <span className="text-wa-yellow text-sm">
-                  🔥 {player.streak}
+            {/* Avatar with rank */}
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0 relative"
+              style={{ backgroundColor: AVATAR_COLORS[i % AVATAR_COLORS.length] }}
+            >
+              {isEndScreen && i === 0 ? "👑" : player.name.charAt(0)}
+              {isEndScreen && i < 3 && (
+                <span className="absolute -bottom-0.5 -right-0.5 bg-wa-bg text-[10px] w-4 h-4 rounded-full flex items-center justify-center border border-wa-border/30 font-black">
+                  {i + 1}
                 </span>
               )}
             </div>
-            <div dir="ltr" className="font-black text-xl text-wa-green">
+
+            {/* Name + streak */}
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-sm truncate">{player.name}</p>
+              {player.streak > 1 && (
+                <p className="text-wa-yellow text-xs">
+                  🔥 רצף של {player.streak}
+                </p>
+              )}
+            </div>
+
+            {/* Score */}
+            <div dir="ltr" className="font-black text-wa-green text-lg">
               {player.score}
             </div>
           </motion.div>

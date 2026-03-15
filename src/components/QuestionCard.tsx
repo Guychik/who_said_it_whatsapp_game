@@ -94,62 +94,47 @@ export default function QuestionCard({
 
   return (
     <div className="max-w-2xl mx-auto">
-      {/* Question counter */}
+      {/* WhatsApp date chip */}
       <div className="flex justify-center mb-4">
         <span
           dir="ltr"
-          className="bg-wa-panel text-wa-text-secondary text-sm font-bold px-4 py-1.5 rounded-full border border-wa-border/50"
+          className="bg-wa-header/80 text-wa-text-secondary text-[11px] px-3 py-1 rounded-md shadow-sm"
         >
-          {questionNumber} / {totalQuestions}
+          שאלה {questionNumber} מתוך {totalQuestions}
         </span>
       </div>
 
-      {/* WhatsApp dark chat background */}
+      {/* Message bubble — floats right like outgoing */}
       <motion.div
         key={questionNumber}
-        initial={{ opacity: 0, y: -20, scale: 0.97 }}
+        initial={{ opacity: 0, y: -15, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 20 }}
-        transition={{ type: "spring", damping: 20, stiffness: 200 }}
-        className="rounded-2xl p-6 shadow-2xl"
-        style={{
-          background: "#0B141A",
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231F2C34' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-        }}
+        exit={{ opacity: 0, y: 15 }}
+        transition={{ type: "spring", damping: 22, stiffness: 200 }}
+        className="flex justify-end"
       >
-        {/* Message bubble */}
-        <div className="relative max-w-md mx-auto">
+        <div className="relative max-w-sm">
           <div
-            className="relative rounded-lg p-4 shadow-sm"
+            className="relative rounded-lg rounded-tr-none p-4 shadow-md"
             style={{ backgroundColor: "#005C4B" }}
           >
-            {/* Bubble tail */}
-            <div
-              className="absolute -top-0 -right-2 w-4 h-4"
-              style={{
-                backgroundColor: "#005C4B",
-                clipPath: "polygon(0 0, 100% 0, 0 100%)",
-              }}
-            />
-
             {/* Author placeholder */}
-            <p className="text-sm font-bold mb-1 text-wa-green">
+            <p className="text-xs font-bold mb-1.5 text-wa-green">
               ?מי אמר את זה
             </p>
 
-            {/* Message content — poll or regular */}
+            {/* Message content */}
             {poll ? (
               <PollBubble poll={poll} />
             ) : (
-              <p className="text-lg leading-relaxed text-wa-text">
+              <p className="text-[15px] leading-relaxed text-wa-text">
                 {question.message.message}
               </p>
             )}
 
-            {/* Timestamp + year */}
-            <div className="flex items-center justify-end gap-1.5 mt-1">
-              <span className="text-xs text-wa-text-secondary/70">
+            {/* Timestamp + read receipts */}
+            <div className="flex items-center justify-end gap-1 mt-1.5">
+              <span className="text-[10px] text-wa-text-secondary/60">
                 {year} · {time}
               </span>
               <svg
@@ -170,6 +155,15 @@ export default function QuestionCard({
               </svg>
             </div>
           </div>
+
+          {/* Bubble tail */}
+          <div
+            className="absolute top-0 -right-2 w-3 h-3"
+            style={{
+              backgroundColor: "#005C4B",
+              clipPath: "polygon(0 0, 100% 0, 0 100%)",
+            }}
+          />
         </div>
       </motion.div>
     </div>
