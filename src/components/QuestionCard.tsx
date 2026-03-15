@@ -15,7 +15,6 @@ interface ParsedPoll {
 }
 
 function parsePoll(text: string): ParsedPoll | null {
-  // WhatsApp poll format: "POLL:\nquestion\nOPTION: text (X vote(s))\n..."
   const pollMatch = text.match(/^POLL:\s*\n?([\s\S]*)/);
   if (!pollMatch) return null;
 
@@ -43,34 +42,31 @@ function PollBubble({ poll }: { poll: ParsedPoll }) {
 
   return (
     <div>
-      {/* Poll icon + question */}
       <div className="flex items-center gap-2 mb-3">
         <span className="text-lg">📊</span>
-        <p className="text-lg font-bold" style={{ color: "#303030" }}>
+        <p className="text-lg font-bold text-wa-text">
           {poll.question}
         </p>
       </div>
 
-      {/* Options */}
       <div className="space-y-2">
         {poll.options.map((opt, i) => (
-          <div key={i} className="rounded-lg overflow-hidden" style={{ backgroundColor: "#f0f0f0" }}>
+          <div key={i} className="rounded-lg overflow-hidden bg-wa-input/50">
             <div className="relative px-3 py-2">
-              {/* Vote bar */}
               <div
                 className="absolute inset-y-0 right-0 rounded-lg"
                 style={{
-                  backgroundColor: "#25D366",
+                  backgroundColor: "#00A884",
                   opacity: 0.2,
                   width: `${Math.max((opt.votes / maxVotes) * 100, 0)}%`,
                 }}
               />
               <div className="relative flex items-center justify-between">
-                <span className="text-sm" style={{ color: "#303030" }}>
+                <span className="text-sm text-wa-text">
                   {opt.text}
                 </span>
                 {opt.votes > 0 && (
-                  <span className="text-xs font-bold mr-2" style={{ color: "#667781" }}>
+                  <span className="text-xs font-bold mr-2 text-wa-text-secondary">
                     {opt.votes}
                   </span>
                 )}
@@ -102,13 +98,13 @@ export default function QuestionCard({
       <div className="flex justify-center mb-4">
         <span
           dir="ltr"
-          className="bg-white/15 backdrop-blur-sm text-white text-sm font-bold px-4 py-1.5 rounded-full"
+          className="bg-wa-panel text-wa-text-secondary text-sm font-bold px-4 py-1.5 rounded-full border border-wa-border/50"
         >
           {questionNumber} / {totalQuestions}
         </span>
       </div>
 
-      {/* WhatsApp chat background */}
+      {/* WhatsApp dark chat background */}
       <motion.div
         key={questionNumber}
         initial={{ opacity: 0, y: -20, scale: 0.97 }}
@@ -117,28 +113,28 @@ export default function QuestionCard({
         transition={{ type: "spring", damping: 20, stiffness: 200 }}
         className="rounded-2xl p-6 shadow-2xl"
         style={{
-          background: "#ECE5DD",
+          background: "#0B141A",
           backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4cdc4' fill-opacity='0.3'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+            "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231F2C34' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
         }}
       >
         {/* Message bubble */}
         <div className="relative max-w-md mx-auto">
           <div
             className="relative rounded-lg p-4 shadow-sm"
-            style={{ backgroundColor: "#DCF8C6" }}
+            style={{ backgroundColor: "#005C4B" }}
           >
             {/* Bubble tail */}
             <div
               className="absolute -top-0 -right-2 w-4 h-4"
               style={{
-                backgroundColor: "#DCF8C6",
+                backgroundColor: "#005C4B",
                 clipPath: "polygon(0 0, 100% 0, 0 100%)",
               }}
             />
 
             {/* Author placeholder */}
-            <p className="text-sm font-bold mb-1" style={{ color: "#075E54" }}>
+            <p className="text-sm font-bold mb-1 text-wa-green">
               ?מי אמר את זה
             </p>
 
@@ -146,17 +142,14 @@ export default function QuestionCard({
             {poll ? (
               <PollBubble poll={poll} />
             ) : (
-              <p
-                className="text-lg leading-relaxed"
-                style={{ color: "#303030" }}
-              >
+              <p className="text-lg leading-relaxed text-wa-text">
                 {question.message.message}
               </p>
             )}
 
             {/* Timestamp + year */}
             <div className="flex items-center justify-end gap-1.5 mt-1">
-              <span className="text-xs" style={{ color: "#8E8E8E" }}>
+              <span className="text-xs text-wa-text-secondary/70">
                 {year} · {time}
               </span>
               <svg

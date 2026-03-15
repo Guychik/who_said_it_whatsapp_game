@@ -14,7 +14,7 @@ interface ChatContextProps {
 
 // Stable color palette for participant names
 const NAME_COLORS = [
-  "#075E54", "#E91E63", "#9C27B0", "#3F51B5",
+  "#00A884", "#E91E63", "#9C27B0", "#3F51B5",
   "#00BCD4", "#FF9800", "#795548", "#607D8B",
   "#E65100", "#1B5E20", "#4A148C", "#B71C1C",
 ];
@@ -46,13 +46,13 @@ export default function ChatContext({
       transition={{ delay: 0.4 }}
       className="max-w-md mx-auto w-full"
     >
-      <p className="text-white/50 text-xs text-center mb-2">ההקשר המלא</p>
+      <p className="text-wa-text-secondary text-xs text-center mb-2">ההקשר המלא</p>
       <div
         className="rounded-2xl p-4 space-y-1.5 shadow-lg"
         style={{
-          background: "#ECE5DD",
+          background: "#0B141A",
           backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4cdc4' fill-opacity='0.3'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+            "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231F2C34' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
         }}
       >
         {slice.map((msg) => {
@@ -70,10 +70,10 @@ export default function ChatContext({
             >
               <div
                 className={`relative rounded-lg px-3 py-2 max-w-[80%] shadow-sm ${
-                  isTarget ? "ring-2 ring-kahoot-yellow" : ""
+                  isTarget ? "ring-2 ring-wa-yellow" : ""
                 }`}
                 style={{
-                  backgroundColor: isSource ? "#DCF8C6" : "#FFFFFF",
+                  backgroundColor: isSource ? "#005C4B" : "#1F2C34",
                 }}
               >
                 {/* Author name */}
@@ -85,7 +85,7 @@ export default function ChatContext({
                 </p>
 
                 {/* Message text */}
-                <p className="text-sm leading-snug" style={{ color: "#303030" }}>
+                <p className="text-sm leading-snug text-wa-text">
                   {msg.message.length > 150
                     ? msg.message.slice(0, 150) + "..."
                     : msg.message}
@@ -93,8 +93,8 @@ export default function ChatContext({
 
                 {/* Timestamp */}
                 <p
-                  className={`mt-0.5 ${isSource ? "text-right" : "text-left"}`}
-                  style={{ color: "#8E8E8E", fontSize: "10px" }}
+                  className={`mt-0.5 text-wa-text-secondary/70 ${isSource ? "text-right" : "text-left"}`}
+                  style={{ fontSize: "10px" }}
                 >
                   {time}
                 </p>

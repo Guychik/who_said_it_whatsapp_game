@@ -11,10 +11,10 @@ interface AnswerGridProps {
 }
 
 const COLORS = [
-  { bg: "bg-kahoot-red", hover: "hover:bg-kahoot-red/80", shape: "▲" },
-  { bg: "bg-kahoot-blue", hover: "hover:bg-kahoot-blue/80", shape: "◆" },
-  { bg: "bg-kahoot-green", hover: "hover:bg-kahoot-green/80", shape: "●" },
-  { bg: "bg-kahoot-yellow", hover: "hover:bg-kahoot-yellow/80", shape: "■" },
+  { bg: "bg-[#E13F3F]", hover: "hover:bg-[#C53030]", shape: "▲" },
+  { bg: "bg-[#3B82F6]", hover: "hover:bg-[#2563EB]", shape: "◆" },
+  { bg: "bg-[#F59E0B]", hover: "hover:bg-[#D97706]", shape: "●" },
+  { bg: "bg-[#10B981]", hover: "hover:bg-[#059669]", shape: "■" },
 ];
 
 export default function AnswerGrid({
@@ -34,12 +34,12 @@ export default function AnswerGrid({
         let extraClasses = "";
         if (isRevealed) {
           if (isCorrect) {
-            extraClasses = "ring-4 ring-white scale-105";
+            extraClasses = "ring-4 ring-wa-green scale-105";
           } else {
             extraClasses = "opacity-40 scale-95";
           }
         } else if (isSelected) {
-          extraClasses = "ring-4 ring-white";
+          extraClasses = "ring-4 ring-wa-green";
         }
 
         return (
@@ -51,9 +51,9 @@ export default function AnswerGrid({
             onClick={() => !isRevealed && !selectedAnswer && onSelect(option)}
             disabled={isRevealed || !!selectedAnswer}
             className={`${color.bg} ${!isRevealed && !selectedAnswer ? color.hover : ""} ${extraClasses}
-              text-white font-bold text-xl p-6 rounded-xl transition-all duration-300
+              text-wa-text font-bold text-xl p-6 rounded-xl transition-all duration-300
               flex items-center gap-3 justify-center cursor-pointer
-              disabled:cursor-default shadow-lg`}
+              disabled:cursor-default shadow-lg border border-wa-border/30`}
           >
             <span className="text-2xl opacity-60">{color.shape}</span>
             <span>{option}</span>

@@ -117,8 +117,8 @@ export default function GamePage() {
         <div className="flex justify-start mb-4">
           <button
             onClick={handleExit}
-            className="bg-white/10 hover:bg-white/20 text-white/70 hover:text-white
-              font-bold px-4 py-2 rounded-lg transition-colors cursor-pointer text-sm"
+            className="bg-wa-panel hover:bg-wa-input text-wa-text-secondary hover:text-wa-text
+              font-bold px-4 py-2 rounded-lg transition-colors cursor-pointer text-sm border border-wa-border/50"
           >
             ✕ יציאה
           </button>
@@ -131,12 +131,12 @@ export default function GamePage() {
           {players.map((p) => (
             <div
               key={p.name}
-              className={`bg-white/10 px-4 py-2 rounded-full flex items-center gap-2 ${
-                currentPlayerName === p.name ? "ring-2 ring-kahoot-yellow" : ""
+              className={`bg-wa-panel px-4 py-2 rounded-full flex items-center gap-2 border ${
+                currentPlayerName === p.name ? "border-wa-green ring-1 ring-wa-green" : "border-wa-border/50"
               }`}
             >
               <span className="font-bold">{p.name}</span>
-              <span dir="ltr" className="text-kahoot-yellow font-black">
+              <span dir="ltr" className="text-wa-green font-black">
                 {p.score}
               </span>
               {p.streak > 1 && <span className="text-sm">🔥{p.streak}</span>}
@@ -155,8 +155,8 @@ export default function GamePage() {
             exit={{ opacity: 0 }}
           >
             {currentPlayerName && (
-              <p className="text-center text-white/60 mb-4">
-                תור של <span className="text-kahoot-yellow font-bold">{currentPlayerName}</span>
+              <p className="text-center text-wa-text-secondary mb-4">
+                תור של <span className="text-wa-green font-bold">{currentPlayerName}</span>
               </p>
             )}
 
@@ -185,7 +185,7 @@ export default function GamePage() {
               <div className="text-center mt-6">
                 <button
                   onClick={handleNext}
-                  className="text-white/40 hover:text-white/70 text-sm font-bold transition-colors cursor-pointer"
+                  className="text-wa-text-secondary hover:text-wa-text text-sm font-bold transition-colors cursor-pointer"
                 >
                   דלג ←
                 </button>
@@ -211,8 +211,8 @@ export default function GamePage() {
               transition={{ type: "spring", damping: 10, stiffness: 200 }}
               className="mb-6"
             >
-              <div className="bg-kahoot-green/30 border-2 border-kahoot-green rounded-2xl p-6 max-w-md mx-auto">
-                <p className="text-2xl font-black mb-1">
+              <div className="bg-wa-green/20 border-2 border-wa-green rounded-2xl p-6 max-w-md mx-auto">
+                <p className="text-2xl font-black">
                   {currentQuestion.correctAnswer}
                 </p>
               </div>
@@ -253,9 +253,9 @@ export default function GamePage() {
                 className="mt-4"
               >
                 {selectedAnswer === currentQuestion.correctAnswer ? (
-                  <p className="text-kahoot-green text-xl font-bold">!תשובה נכונה 🎉</p>
+                  <p className="text-wa-green text-xl font-bold">!תשובה נכונה 🎉</p>
                 ) : (
-                  <p className="text-kahoot-red text-xl font-bold">תשובה שגויה 😔</p>
+                  <p className="text-wa-danger text-xl font-bold">תשובה שגויה 😔</p>
                 )}
               </motion.div>
             )}
@@ -275,8 +275,8 @@ export default function GamePage() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleNext}
-              className="mt-8 bg-kahoot-yellow text-kahoot-purple-dark font-black text-xl px-10 py-4 rounded-xl
-                hover:bg-kahoot-yellow/90 transition-colors cursor-pointer shadow-xl"
+              className="mt-8 bg-wa-green text-white font-black text-xl px-10 py-4 rounded-xl
+                hover:bg-wa-green-dark transition-colors cursor-pointer shadow-xl"
             >
               {currentQuestionIndex < questions.length - 1
                 ? "שאלה הבאה ←"
@@ -300,16 +300,16 @@ export default function GamePage() {
             >
               !המשחק נגמר
             </motion.h1>
-            <p className="text-white/60 text-lg mb-8">
+            <p className="text-wa-text-secondary text-lg mb-8">
               שיחקתם {questions.length} שאלות
             </p>
 
             {players.length > 0 ? (
               <ScoreBoard players={players} isEndScreen />
             ) : (
-              <div className="bg-white/10 rounded-2xl p-8 max-w-md mx-auto">
+              <div className="bg-wa-panel rounded-2xl p-8 max-w-md mx-auto border border-wa-border/50">
                 <p className="text-xl">!מקווים שנהניתם</p>
-                <p className="text-white/60 mt-2">
+                <p className="text-wa-text-secondary mt-2">
                   הוסיפו שחקנים בפעם הבאה למעקב ניקוד
                 </p>
               </div>
@@ -322,8 +322,8 @@ export default function GamePage() {
                   whileTap={{ scale: 0.95 }}
                   onClick={handleReplay}
                   disabled={replaying}
-                  className="bg-kahoot-yellow text-kahoot-purple-dark font-black text-xl px-8 py-4 rounded-xl
-                    hover:bg-kahoot-yellow/90 transition-colors cursor-pointer shadow-xl
+                  className="bg-wa-green text-white font-black text-xl px-8 py-4 rounded-xl
+                    hover:bg-wa-green-dark transition-colors cursor-pointer shadow-xl
                     disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {replaying ? "...טוען שאלות חדשות" : "🔄 שאלות חדשות"}
@@ -333,8 +333,8 @@ export default function GamePage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleExit}
-                className="bg-white/20 text-white font-bold text-xl px-8 py-4 rounded-xl
-                  hover:bg-white/30 transition-colors cursor-pointer"
+                className="bg-wa-panel text-wa-text font-bold text-xl px-8 py-4 rounded-xl
+                  hover:bg-wa-input transition-colors cursor-pointer border border-wa-border/50"
               >
                 צ׳אט חדש
               </motion.button>

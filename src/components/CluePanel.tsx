@@ -27,14 +27,14 @@ export default function CluePanel({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={onRevealClue}
-            className="bg-kahoot-orange text-white font-bold px-4 py-2 rounded-lg text-sm
-              hover:bg-kahoot-orange/80 transition-colors cursor-pointer shadow-md"
+            className="bg-wa-green text-white font-bold px-4 py-2 rounded-lg text-sm
+              hover:bg-wa-green-dark transition-colors cursor-pointer shadow-md"
           >
             גלה רמז (-20 נק׳)
           </motion.button>
         )}
         {!hasMoreClues && (
-          <span className="text-white/40 text-sm">אין עוד רמזים</span>
+          <span className="text-wa-text-secondary text-sm">אין עוד רמזים</span>
         )}
       </div>
 
@@ -46,12 +46,12 @@ export default function CluePanel({
               initial={{ opacity: 0, x: -20, height: 0 }}
               animate={{ opacity: 1, x: 0, height: "auto" }}
               transition={{ type: "spring", damping: 20 }}
-              className="bg-white/10 backdrop-blur-sm rounded-lg p-3 flex items-start gap-3"
+              className="bg-wa-panel backdrop-blur-sm rounded-lg p-3 flex items-start gap-3 border border-wa-border/50"
             >
-              <span className="text-kahoot-yellow font-bold text-sm shrink-0">
+              <span className="text-wa-green font-bold text-sm shrink-0">
                 {clue.label}:
               </span>
-              <span className="text-white">{clue.value}</span>
+              <span className="text-wa-text">{clue.value}</span>
             </motion.div>
           ))}
         </AnimatePresence>
