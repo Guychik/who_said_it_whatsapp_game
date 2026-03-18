@@ -75,3 +75,26 @@ export function calculateScore(
 
   return { total, base, cluePenalty, streakBonus, streak: newStreak, isCorrect: true };
 }
+
+// Party mode scoring: speed bonus + clue penalty
+export function calculatePartyScore(
+  isCorrect: boolean,
+  timeRemaining: number,
+  totalTime: number,
+  currentStreak: number,
+  cluesUsed: number = 0
+): { total: number; base: number; speedBonus: number; streakBonus: number; cluePenalty: number; streak: number; isCorrect: boolean } {
+  const cluePenalty = cluesUsed * 20;
+
+  if (!isCorrect) {
+    return { total: -cluePenalty, base: 0, speedBonus: 0, streakBonus: 0, cluePenalty, streak: 0, isCorrect: false };
+  }
+
+  const base = 100;
+  const speedBonus = Math.round((timeRemaining / totalTime) * 50);
+  const newStreak = currentStreak + 1;
+  const streakBonus = currentStreak * 25;
+  const total = base + speedBonus + streakBonus - cluePenalty;
+
+  return { total, base, speedBonus, streakBonus, cluePenalty, streak: newStreak, isCorrect: true };
+}
