@@ -39,6 +39,24 @@ export interface ChatData {
   geminiApiKey?: string;
 }
 
+export interface ScoreBreakdown {
+  total: number;
+  base: number;
+  cluePenalty: number;
+  streakBonus: number;
+  streak: number;
+  isCorrect: boolean;
+}
+
+export interface TurnRecord {
+  questionIndex: number;
+  playerName: string;
+  isCorrect: boolean;
+  cluesUsed: number;
+  pointsEarned: number;
+  streakAtTime: number;
+}
+
 export interface GameState {
   phase: GamePhase;
   questions: GameQuestion[];
@@ -49,4 +67,6 @@ export interface GameState {
   revealedClues: number;
   selectedAnswer: string | null;
   chatData: ChatData | null;
+  lastScoreBreakdown: ScoreBreakdown | null;
+  turnHistory: TurnRecord[];
 }

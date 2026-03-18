@@ -1,4 +1,4 @@
-import { FilteredMessage, GameQuestion, Clue, ParsedMessage } from "@/types";
+import { FilteredMessage, GameQuestion, Clue, ParsedMessage, ScoreBreakdown } from "@/types";
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -41,19 +41,7 @@ function generateClues(
 ): Clue[] {
   const clues: Clue[] = [];
 
-  // Clue 1: Date of message
-  const date = new Date(msg.date);
-  const formattedDate = date.toLocaleDateString("he-IL", {
-    month: "long",
-    day: "numeric",
-  });
-  clues.push({
-    type: "date",
-    label: "תאריך ההודעה",
-    value: formattedDate,
-  });
-
-  // Clue 2: Prior message in the conversation (author hidden)
+  // Clue: Prior message in the conversation (author hidden)
   const msgIdx = allMessages.findIndex((m) => m.index === msg.index);
   if (msgIdx > 0) {
     const prev = allMessages[msgIdx - 1];
@@ -73,12 +61,17 @@ export function calculateScore(
   isCorrect: boolean,
   cluesUsed: number,
   currentStreak: number
-): number {
-  if (!isCorrect) return 0;
-
-  const basePoints = 100;
+): ScoreBreakdown {
   const cluePenalty = cluesUsed * 20;
-  const streakBonus = currentStreak * 25;
 
-  return Math.max(0, basePoints - cluePenalty + streakBonus);
+  if (!isCorrect) {
+    return { total: -cluePenalty, base: 0, cluePenalty, streakBonus: 0, streak: 0, isCorrect: false };
+  }
+
+  const base = 100;
+  const newStreak = currentStreak + 1;
+  const streakBonus = currentStreak * 25;
+  const total = base - cluePenalty + streakBonus;
+
+  return { total, base, cluePenalty, streakBonus, streak: newStreak, isCorrect: true };
 }
