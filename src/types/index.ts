@@ -57,6 +57,19 @@ export interface TurnRecord {
   streakAtTime: number;
 }
 
+// Party mode types
+export interface PartyPlayer {
+  id: string;
+  name: string;
+  score: number;
+  streak: number;
+  answer: string | null;
+  answeredAt: number | null;
+  isConnected: boolean;
+}
+
+export type PartyPhase = "setup" | "lobby" | "playing" | "reveal" | "end";
+
 export interface GameState {
   phase: GamePhase;
   questions: GameQuestion[];
