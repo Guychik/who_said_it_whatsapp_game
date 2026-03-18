@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import { GameState, GameQuestion, ParsedMessage, ChatData } from "@/types";
+import { GameState, GameQuestion, ParsedMessage, ChatData, ScoreBreakdown, TurnRecord } from "@/types";
 import { calculateScore } from "./game-logic";
 
 interface GameActions {
@@ -31,6 +31,8 @@ const initialState: GameState = {
   revealedClues: 0,
   selectedAnswer: null,
   chatData: null,
+  lastScoreBreakdown: null,
+  turnHistory: [],
 };
 
 export const useGameStore = create<GameState & GameActions>((set, get) => ({
@@ -64,19 +66,36 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
     if (!question) return;
 
     const isCorrect = answer === question.correctAnswer;
+    let breakdown: ScoreBreakdown | null = null;
 
-    set((s) => ({
-      selectedAnswer: answer,
-      players: s.players.map((p) => {
+    set((s) => {
+      const newPlayers = s.players.map((p) => {
         if (p.name !== playerName) return p;
-        const points = calculateScore(isCorrect, s.revealedClues, p.streak);
+        const result = calculateScore(isCorrect, s.revealedClues, p.streak);
+        breakdown = result;
         return {
           ...p,
-          score: p.score + points,
+          score: p.score + result.total,
           streak: isCorrect ? p.streak + 1 : 0,
         };
-      }),
-    }));
+      });
+
+      const turn: TurnRecord = {
+        questionIndex: s.currentQuestionIndex,
+        playerName,
+        isCorrect,
+        cluesUsed: s.revealedClues,
+        pointsEarned: breakdown?.total ?? 0,
+        streakAtTime: breakdown?.streak ?? 0,
+      };
+
+      return {
+        selectedAnswer: answer,
+        players: newPlayers,
+        lastScoreBreakdown: breakdown,
+        turnHistory: [...s.turnHistory, turn],
+      };
+    });
   },
 
   revealClue: () =>

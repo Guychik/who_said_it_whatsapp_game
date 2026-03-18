@@ -17,10 +17,10 @@ export default function Home() {
 
   const [file, setFile] = useState<File | null>(null);
   const [playerInput, setPlayerInput] = useState("");
-  const [questionCount, setQuestionCount] = useState(10);
+  const [questionCount, setQuestionCount] = useState(5);
   const [loading, setLoading] = useState(false);
   const [loadingText, setLoadingText] = useState("");
-  const [useAI, setUseAI] = useState(true);
+  const [useAI, setUseAI] = useState(false);
   const [geminiApiKey, setGeminiApiKey] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [showHelp, setShowHelp] = useState(false);
@@ -110,16 +110,6 @@ export default function Home() {
             <p className="text-wa-text-secondary text-xs">משחק ניחושים לקבוצת וואטסאפ</p>
           </div>
         </div>
-        <button
-          onClick={() => setShowHelp(true)}
-          className="w-8 h-8 rounded-full hover:bg-wa-input text-wa-text-secondary hover:text-wa-text
-            flex items-center justify-center cursor-pointer transition-colors"
-          title="איך מייצאים שיחה מוואטסאפ?"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
-          </svg>
-        </button>
       </div>
 
       {/* Help modal */}
@@ -205,7 +195,21 @@ export default function Home() {
                 className="space-y-6"
               >
                 {/* File Upload */}
-                <FileUpload onFileSelected={setFile} />
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <FileUpload onFileSelected={setFile} />
+                  </div>
+                  <button
+                    onClick={() => setShowHelp(true)}
+                    className="w-8 h-8 rounded-full bg-wa-input hover:bg-wa-text-secondary/30 text-wa-text-secondary hover:text-wa-text
+                      flex items-center justify-center cursor-pointer transition-colors shrink-0"
+                    title="איך מייצאים שיחה?"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+                    </svg>
+                  </button>
+                </div>
 
                 {/* Settings section — styled like WhatsApp settings */}
                 <div className="bg-wa-panel rounded-xl overflow-hidden border border-wa-border/30">

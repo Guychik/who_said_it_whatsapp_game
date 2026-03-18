@@ -89,7 +89,6 @@ export default function QuestionCard({
     hour: "2-digit",
     minute: "2-digit",
   });
-  const year = date.getFullYear();
   const poll = parsePoll(question.message.message);
 
   return (
@@ -135,7 +134,7 @@ export default function QuestionCard({
             {/* Timestamp + read receipts */}
             <div className="flex items-center justify-end gap-1 mt-1.5">
               <span className="text-[10px] text-wa-text-secondary/60">
-                {year} · {time}
+                {date.toLocaleDateString("he-IL", { day: "numeric", month: "short", year: "numeric" })} · {time}
               </span>
               <svg
                 width="16"

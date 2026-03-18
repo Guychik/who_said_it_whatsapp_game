@@ -30,10 +30,13 @@ export default function GamePage() {
     nextQuestion,
     resetGame,
     initGame,
+    lastScoreBreakdown,
+    turnHistory,
   } = useGameStore();
 
   const [activePlayer, setActivePlayer] = useState(0);
   const [replaying, setReplaying] = useState(false);
+  const [frozenScores, setFrozenScores] = useState<Record<string, number>>({});
 
   useEffect(() => {
     if (questions.length === 0) {
@@ -48,10 +51,16 @@ export default function GamePage() {
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
 
   const handleSelectAnswer = (answer: string) => {
+    // Freeze scores before updating so header doesn't spoil the result
+    const scores: Record<string, number> = {};
+    players.forEach((p) => { scores[p.name] = p.score; });
+    setFrozenScores(scores);
+
     if (currentPlayerName) {
       selectAnswer(currentPlayerName, answer);
     }
     setTimeout(() => revealAnswer(), 700);
+    setTimeout(() => setFrozenScores({}), 1400);
   };
 
   const handleNext = () => {
@@ -88,7 +97,7 @@ export default function GamePage() {
       const resetPlayers = players.map((p) => ({ ...p, score: 0, streak: 0 }));
 
       initGame(newQuestions, chatData.participants, hydratedAll, chatData);
-      useGameStore.setState({ players: resetPlayers });
+      useGameStore.setState({ players: resetPlayers, turnHistory: [] });
       setActivePlayer(0);
     } catch {
       resetGame();
@@ -121,7 +130,8 @@ export default function GamePage() {
             </div>
 
             {/* Score pills */}
-            <div className="flex gap-1.5">
+            <div className="flex items-center gap-1.5">
+              {players.length > 0 && <span className="text-wa-text-secondary text-[10px]">ניקוד</span>}
               {players.length > 0 ? players.slice(0, 3).map((p) => (
                 <div
                   key={p.name}
@@ -131,7 +141,7 @@ export default function GamePage() {
                       : "bg-wa-input text-wa-text-secondary"
                   }`}
                 >
-                  <span className="font-bold">{p.score}</span>
+                  <span className="font-bold">{frozenScores[p.name] ?? p.score}</span>
                 </div>
               )) : (
                 <div className="w-5" />
@@ -228,8 +238,8 @@ export default function GamePage() {
                 </div>
               </motion.div>
 
-              {/* Score feedback */}
-              {selectedAnswer && players.length > 0 && (
+              {/* Score feedback with breakdown */}
+              {selectedAnswer && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -237,14 +247,21 @@ export default function GamePage() {
                   className="mb-4"
                 >
                   {selectedAnswer === currentQuestion.correctAnswer ? (
-                    <div className="inline-flex items-center gap-2 bg-wa-green/15 text-wa-green text-sm font-bold px-4 py-2 rounded-full">
-                      <span>תשובה נכונה</span>
-                      <span>✓✓</span>
+                    <div className="inline-flex items-center gap-2 text-sm font-bold">
+                      <span className="bg-wa-green/15 text-wa-green px-3 py-1.5 rounded-full">תשובה נכונה +100</span>
+                      {players.length > 0 && lastScoreBreakdown && lastScoreBreakdown.cluePenalty > 0 && (
+                        <span className="bg-wa-danger/15 text-wa-danger px-3 py-1.5 rounded-full">רמז -{lastScoreBreakdown.cluePenalty}</span>
+                      )}
+                      {players.length > 0 && lastScoreBreakdown && lastScoreBreakdown.streakBonus > 0 && (
+                        <span className="bg-wa-yellow/15 text-wa-yellow px-3 py-1.5 rounded-full">🔥 +{lastScoreBreakdown.streakBonus}</span>
+                      )}
                     </div>
                   ) : (
-                    <div className="inline-flex items-center gap-2 bg-wa-danger/15 text-wa-danger text-sm font-bold px-4 py-2 rounded-full">
-                      <span>תשובה שגויה</span>
-                      <span>✗</span>
+                    <div className="inline-flex items-center gap-2 text-sm font-bold">
+                      <span className="bg-wa-danger/15 text-wa-danger px-3 py-1.5 rounded-full">תשובה שגויה</span>
+                      {players.length > 0 && lastScoreBreakdown && lastScoreBreakdown.cluePenalty > 0 && (
+                        <span className="bg-wa-danger/15 text-wa-danger px-3 py-1.5 rounded-full">רמז -{lastScoreBreakdown.cluePenalty}</span>
+                      )}
                     </div>
                   )}
                 </motion.div>
@@ -300,7 +317,55 @@ export default function GamePage() {
               </div>
 
               {players.length > 0 ? (
-                <ScoreBoard players={players} isEndScreen />
+                <>
+                  <ScoreBoard players={players} isEndScreen />
+
+                  {/* Detailed breakdown per player */}
+                  {turnHistory.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6 }}
+                      className="max-w-md mx-auto mt-6"
+                    >
+                      <div className="bg-wa-panel rounded-xl border border-wa-border/30 overflow-hidden">
+                        <div className="px-4 py-3 border-b border-wa-border/20">
+                          <p className="text-wa-text-secondary text-xs">פירוט ניקוד</p>
+                        </div>
+                        {[...players].sort((a, b) => b.score - a.score).map((player) => {
+                          const playerTurns = turnHistory.filter((t) => t.playerName === player.name);
+                          const correctCount = playerTurns.filter((t) => t.isCorrect).length;
+                          const totalClues = playerTurns.reduce((sum, t) => sum + t.cluesUsed, 0);
+                          const maxStreak = Math.max(0, ...playerTurns.map((t) => t.streakAtTime));
+
+                          return (
+                            <div key={player.name} className="px-4 py-3 border-b border-wa-border/10 last:border-b-0" dir="rtl">
+                              <p className="font-bold text-sm mb-2">{player.name}</p>
+                              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                                <div className="flex justify-between">
+                                  <span className="text-wa-text-secondary">תשובות נכונות</span>
+                                  <span className="text-wa-green font-bold">{correctCount}/{playerTurns.length}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-wa-text-secondary">רצף מקסימלי</span>
+                                  <span className="text-wa-yellow font-bold">{maxStreak}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-wa-text-secondary">רמזים שנוצלו</span>
+                                  <span className="text-wa-danger font-bold">{totalClues}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-wa-text-secondary">ניקוד סופי</span>
+                                  <span className="text-wa-green font-black">{player.score}</span>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </>
               ) : (
                 <div className="bg-wa-panel rounded-xl p-6 max-w-md mx-auto border border-wa-border/30 text-center">
                   <p className="text-base">!מקווים שנהניתם</p>
